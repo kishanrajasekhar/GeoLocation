@@ -8,18 +8,30 @@
 <body>
 	
 	<script>
-	  // Only change code below this line.
-	  if(navigator.geolocation){
-	    navigator.geolocation.getCurrentPosition(function(position){
-	      $("#data").html("latitude: " + position.coords.latitude + "<br>longitude: " + position.coords.longitude);
-	    });
-	  }
-	  // Only change code above this line.
+    var lat;
+    var lon;
+    var reverseGeoCodeURL = "http://maps.googleapis.com/maps/api/geocode/json?sensor=true";
+    
+    $(document).ready(function() {
+        if(navigator.geolocation){ // asks user for their location (do this first before executing script 
+            navigator.geolocation.getCurrentPosition(function(position){
+                lat = position.coords.latitude;
+                lon = position.coords.longitude;
+                reverseGeoCodeURL += "&latlng=" + lat + "," + lon;
+                
+                $.getJSON(reverseGeoCodeURL, function(json){
+                    var city = json.results[0].address_components[3].short_name;
+                    var message = 'lat: ' + lat + ' lon: ' + lon + '<br>';
+                    message += 'Your location is: ';
+                    message += city;
+                    $('#data').html(message);
+                });         
+            });
+        }
+    });
 	</script>
-	<div id = "data">
-	  <h4>You are here:</h4>
-	  
-	</div>
+    
+	<div id = "data"></div>
 
 </body>
 </html>
